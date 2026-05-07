@@ -9,6 +9,11 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+/**
+ * 这个注解打开了一个开关：允许在 Controller 的方法上使用
+ *
+ * @PreAuthorize、@PostAuthorize、@PreFilter、@PostFilter 这四个注解。
+ */
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -17,9 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 配置请求地址的权限
                 .authorizeRequests()
                     .antMatchers("/test/demo").permitAll() // 所有用户可访问
-                    .antMatchers("/test/admin").hasRole("ADMIN") // 需要 ADMIN 角色
+                    .antMatchers("/test/admin").hasRole("ADMIN") // 需要 ADMIN 角色  *语法糖，简写法，内部会自动加 ROLE_ 前缀
                     .antMatchers("/test/normal").access("hasRole('ROLE_NORMAL')") // 需要 NORMAL 角色。
-                    // 任何请求，访问的用户都需要经过认证
+                    // 其余所有请求至少需要登录
                     .anyRequest().authenticated()
                 .and()
                 // 设置 Form 表单登陆
@@ -36,13 +41,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.
-                // 使用内存中的 InMemoryUserDetailsManager
+                // 使用内存中的 InMemoryUserDetailsManager——用户存在内存里，重启就没了
                 inMemoryAuthentication()
-                // 不使用 PasswordEncoder 密码编码器
+                // 不使用 PasswordEncoder 密码编码器——密码明文存储
                 .passwordEncoder(NoOpPasswordEncoder.getInstance())
-                // 配置 admin 用户
+                // 创建 admin 用户
+                //Spring Security 内部会自动给角色加上 ROLE_前缀，所以实际角色是 ROLE_ADMIN
                 .withUser("admin").password("admin").roles("ADMIN")
-                // 配置 normal 用户
+                // 创建 normal 用户
+                // .and() — 返回上一级
                 .and().withUser("normal").password("normal").roles("NORMAL");
     }
 
