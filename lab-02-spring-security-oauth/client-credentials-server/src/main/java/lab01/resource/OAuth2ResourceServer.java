@@ -8,6 +8,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 // 资源服务配置
 @Configuration
 @EnableResourceServer
+/**
+ * 启用资源服务器，注入一个高优先级的
+ * OAuth2AuthenticationProcessingFilter，
+ * 用于自动解析请求头里的 Authorization: Bearer xxx。
+ */
 public class OAuth2ResourceServer extends ResourceServerConfigurerAdapter {
 
     @Override
@@ -18,7 +23,7 @@ public class OAuth2ResourceServer extends ResourceServerConfigurerAdapter {
                 .authenticated()
                 .and()
                 .requestMatchers()
-                .antMatchers("/api/**");
+                .antMatchers("/api/**");  //决定/api/**这些路径走 OAuth2 校验
     }
 
 }

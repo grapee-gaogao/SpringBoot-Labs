@@ -14,9 +14,20 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdapter {
 
     // 用户认证
+    /**
+     * 密码模式必须有 AuthenticationManager ——
+     *   因为授权服务器拿到 username/password 后，
+     *   需要走 Spring Security 标准认证流程
+     *   去校验"这个用户密码对不对"。
+     */
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    /**
+     * 把 AuthenticationManager 注入到 /oauth/token 端点
+     * 没有这一行，密码模式会直接报错：Unsupported
+     * grant type: password。
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager);

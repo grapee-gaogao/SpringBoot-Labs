@@ -30,6 +30,7 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore()) // 设置 tokenStore
+                // 告诉授权服务器 endpoints："发 token、查 token、撤token 全部用 JdbcTokenStore
                 .authenticationManager(authenticationManager); // 设置 authenticationManager
     }
 
@@ -43,9 +44,14 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
 //                ;
 
         // 加载 ClientDetails
+        //client 信息从 oauth_client_details表里读
+        //底层会创建一个 JdbcClientDetailsService，每次有请求带 client_id 进来都会查表。
         clients.jdbc(dataSource());
     }
 
+    /**
+     * 手动创建一个数据源
+     */
     @Bean
     public DataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -56,6 +62,10 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
         return dataSource;
     }
 
+    /**
+     * JdbcTokenStore 实现了 TokenStore接口
+     *  所有"存 token / 查 token / 删token"的操作都落库
+     */
     @Bean
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource());

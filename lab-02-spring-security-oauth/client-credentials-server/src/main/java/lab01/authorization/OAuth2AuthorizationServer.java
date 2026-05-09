@@ -12,6 +12,7 @@ public class OAuth2AuthorizationServer extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        //注册"客户端"信息（不是用户，是访问 API 的 app）
         clients.inMemory()
                 .withClient("clientapp").secret("112233") // Client 账号、密码。
                 .authorizedGrantTypes("client_credentials") // 授权码模式

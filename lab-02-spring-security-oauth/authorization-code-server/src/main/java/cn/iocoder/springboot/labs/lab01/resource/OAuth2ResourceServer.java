@@ -13,12 +13,12 @@ public class OAuth2ResourceServer extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                // 对 "/api/**" 开启认证
+                // /api/** 路径下所有请求，必须带有效 Token
                 .anyRequest()
                 .authenticated()
                 .and()
                 .requestMatchers()
-                .antMatchers("/api/**");
+                .antMatchers("/api/**"); // 只对 /api/** 路径生效
     }
 
 }

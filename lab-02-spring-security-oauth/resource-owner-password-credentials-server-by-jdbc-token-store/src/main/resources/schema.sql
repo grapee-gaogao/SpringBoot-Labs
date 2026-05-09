@@ -1,17 +1,18 @@
 --------------- MySQL ---------------
 drop table if exists oauth_client_details;
+-- 存client信息
 create table oauth_client_details (
-  client_id VARCHAR(255) PRIMARY KEY,
+  client_id VARCHAR(255) PRIMARY KEY,  -- .withClient
   resource_ids VARCHAR(255),
-  client_secret VARCHAR(255),
-  scope VARCHAR(255),
-  authorized_grant_types VARCHAR(255),
-  web_server_redirect_uri VARCHAR(255),
+  client_secret VARCHAR(255),  -- .secret
+  scope VARCHAR(255), -- .scopes
+  authorized_grant_types VARCHAR(255), -- .authorizedGrantTypes
+  web_server_redirect_uri VARCHAR(255), -- .redirectUris
   authorities VARCHAR(255),
-  access_token_validity INTEGER,
-  refresh_token_validity INTEGER,
+  access_token_validity INTEGER,  -- .accessTokenValiditySeconds
+  refresh_token_validity INTEGER, -- .refreshTokenValiditySecond
   additional_information VARCHAR(4096),
-  autoapprove VARCHAR(255)
+  autoapprove VARCHAR(255) -- 是否自动同意 scope（授权码/简化模式才用）
 );
 
 create table if not exists oauth_client_token (
